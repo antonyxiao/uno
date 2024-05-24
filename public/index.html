@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<head>
+	<link rel="stylesheet" type="text/css" href="/styles.css" />
+	<meta charset="utf-8" />
+    <link rel="icon" href="favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="logo192.png" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="manifest.json" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <title>React App</title>
+</head> 
+<body>
+<noscript>You need to enable JavaScript to run this app.</noscript>
+
+<!-- home page, create room / join room-->
+<div id="home">
+    <h1>Uno Game</h1>
+    <button id="createRoomBtn">Create Room</button>
+    <div>
+      	<input
+        type="text"
+		    id="roomCode"
+        placeholder="Enter Room ID"
+        value=""
+      	/>
+    	<button id="joinRoomBtn">Join Room</button>
+    </div>
+	<p class="error" id="homeError"></p>
+</div>
+
+<!-- choosing username -->
+<div id="chooseUsername">
+  <h1>Enter Your Username</h1>
+  <input
+    type="text"
+    placeholder="Username"
+    id="usernameInput"
+  />
+  <button id="usernameSubmitBtn">Submit</button>
+  <button id="usernameBackBtn">Back</button>
+</div>
+
+<!-- waiting room -->
+<div id="waitingRoom">
+  <h2 id="roomIdDisplay"></h2>
+  <h3 id="username"></h3>
+  <h3 id="playerCount"></h3>
+  <ul id="playerList"></ul>
+    <button
+      id="readyBtn"
+    >
+      Click to Ready
+    </button>
+  <button id="quitRoomBtn">Quit</button>
+</div>
+
+
+<script type="module">
+  import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+
+  const socket = io();
+
+	document.addEventListener('DOMContentLoaded', (event) => {
+
+		// Listen for the setCookie event from the server
+		socket.on('setCookie', (data) => {
+			document.cookie = `playerId=${data.socketId}; path=/`;
+			console.log(`Cookie set: socketId=${data.socketId}`);
+		});
+
+
+		// assigns userId
+		var userId = null;
+		socket.on('newUserId',function(data){
+			userId = data.newUserId;
+			//console.log(userId);
+		});
+		
+    // Home page
+    var home = document.getElementById('home');
+ 
+    var createRoomBtn = document.getElementById('createRoomBtn');
+		var roomIdInput = document.getElementById('roomCode');;
+		var joinRoomBtn = document.getElementById('joinRoomBtn');
+
+    // Choose username page
+    var chooseUsername = document.getElementById('chooseUsername');
+
+    var usernameSubmitBtn = document.getElementById('usernameSubmitBtn');
+    var usernameBackBtn = document.getElementById('usernameBackBtn');
+    var username = '';
+
+    // Waiting room page
+    var waitingRoom = document.getElementById('waitingRoom');
+
+    var roomIdDisplay = document.getElementById('roomIdDisplay');
+    var chosenUsername = document.getElementById('username');
+    var playerCount = document.getElementById('playerCount');
+    var playerList = document.getElementById('playerList');
+    var readyBtn = document.getElementById('readyBtn');
+    var quitRoomBtn = document.getElementById('quitRoomBtn');
+
+    // client roomId
+    var roomId;
+
+    // room created
+		socket.on('roomCreated',function(data){
+			roomId = data;
+		});
+
+    // clear the room code input box
+    roomIdInput.value = '';
+
+    // if a room code was received from the URL
+		socket.on('roomCode',function(data){
+      roomIdInput.value = data.code;
+		});
+
+  
+    // if entered room code exists
+    socket.on('roomExists',function(data){
+      if (data) {
+        roomId = roomIdInput.value
+        home.style.display = 'none';
+        chooseUsername.style.display = 'inline';
+      } else {
+        homeError.innerHTML = 'Room does not exist.';
+      }
+		});
+
+    // update waiting room
+    socket.on('updateWaitingRoom',function(data){
+      playerCount.innerHTML = 'Players: ' + Object.keys(data.players).length;
+
+      playerList.innerHTML = '';
+      for (let uid in data.players) {
+        playerList.innerHTML += `<li>${data.players[uid].username} ${data.players[uid].isReady ? ' (Ready)' : ''}</li>`;
+      }
+      
+		});
+		 
+
+    /* botton actions */
+
+    // click Create Room -> choose username
+		createRoomBtn.onclick = function(){
+      home.style.display = 'none';
+      chooseUsername.style.display = 'inline';
+      socket.emit('createRoom', {createRoomUserId:userId});
+		}
+
+    // click Join Room -> choose username
+    joinRoomBtn.onclick = function(){
+      socket.emit('joinRoom', {createRoomUserId:userId, roomId:roomIdInput.value});
+		}
+
+    // click Back -> go back to home page
+		usernameBackBtn.onclick = function(){
+      home.style.display = 'inline';
+      chooseUsername.style.display = 'none';
+		}
+
+    // submit username -> enter waiting room
+    usernameSubmitBtn.onclick = function(){
+      username = document.getElementById('usernameInput').value;
+
+      socket.emit('joinWaitingRoom', {roomId:roomId, userId:userId, username:username});
+
+      chooseUsername.style.display = 'none';
+      waitingRoom.style.display = 'inline';
+
+      readyBtn.removeAttribute('disabled');
+      readyBtn.style.backgroundColor = '';
+      readyBtn.style.cursor = '';
+
+      roomIdDisplay.innerHTML = 'Room ID: ' + roomId;
+      chosenUsername.innerHTML = 'Username: ' + username;
+    }
+
+    roomIdDisplay.onclick = function() {
+      copyToClipboard(roomId);
+    }
+
+    // ready to play game in waiting room
+    readyBtn.onclick = function(){
+      socket.emit('ready',{roomId:roomId, userId:userId});
+      readyBtn.setAttribute('disabled', true);
+      readyBtn.style.backgroundColor = 'gray';
+      readyBtn.style.cursor = 'not-allowed';
+    }
+
+    // quit waiting room
+    quitRoomBtn.onclick = function(){
+      socket.emit('quitWaitingRoom',{roomId:roomId, userId:userId});
+      
+      home.style.display = 'inline';
+      waitingRoom.style.display = 'none';
+    }
+    
+
+	});
+
+function copyToClipboard(text) {
+
+   // Copy the text inside the text field
+  navigator.clipboard.writeText(text);
+
+} 
+
+</script>
+</body>
+</html>
