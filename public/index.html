@@ -69,8 +69,33 @@
       Click to Ready
     </button>
   <button id="quitRoomBtn">Quit</button>
+  <div>
+  <br>
+  <input type="checkbox" class="ruleBtn" id="playMultiple" onchange="changeRule(this)" value="playMultiple">
+    <label for="playMultiple"> Allow playing multiple cards of same value</label>
+  <br>
+  <input type="checkbox" class="ruleBtn" id="draw2Stack" onchange="changeRule(this)" value="draw2Stack">
+    <label for="draw2Stack"> Allow consecutive [Draw 2] stacking</label>
+  <br>
+  <input type="checkbox" class="ruleBtn" id="draw4Stack" onchange="changeRule(this)" value="draw4Stack">
+    <label for="draw4Stack"> Allow consecutive [Draw 4] stacking</label>
+  <br>
+  <input type="checkbox" class="ruleBtn" id="draw4OnDraw2" onchange="changeRule(this)" value="draw4OnDraw2">
+    <label for="draw4OnDraw2"> Allow [Draw 4] on [Draw 2]</label>
+  <br>
+  <input type="checkbox" class="ruleBtn" id="draw2OnDraw4" onchange="changeRule(this)" value="draw2OnDraw4">
+    <label for="draw2OnDraw4"> Allow [Draw 2] on [Draw 4] of same colour</label>
+  </div>
 </div>
 
+<!-- Game room -->
+<div id="gameRoom">
+  <div id="otherCards"></div>
+  <div id="discard"></div>
+  <div id="hand">
+    <div id="cards-container"></div>
+  </div>
+</div>
 
 <script type="module">
   import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
@@ -117,6 +142,15 @@
     var readyBtn = document.getElementById('readyBtn');
     var quitRoomBtn = document.getElementById('quitRoomBtn');
 
+    var ruleBtn = document.getElementById('ruleBtn');
+
+    // Game room page
+    var gameRoom = document.getElementById('gameRoom');
+
+    var discard = document.getElementById('discard');
+    var hand = document.getElementById('cards-container'); 
+
+
     // client roomId
     var roomId;
 
@@ -156,6 +190,29 @@
       
 		});
 		 
+    // game room after every player is ready
+    socket.on('gameStarted', function(data){
+      waitingRoom.style.display = 'none';
+      gameRoom.style.display = 'inline';
+      
+      var handHTML = '';
+
+      //gameRoom.innerHTML = data.deal;
+
+      // display deal cards
+      for (let card of data.deal) {
+        handHTML += getCardHTML(card);
+      }
+      hand.innerHTML = handHTML;
+
+      discard.innerHTML = getCardHTML(data.discardPile);
+
+
+      // other players
+      createFields(data.obfPlayers);
+      distributeFields();
+
+    });
 
     /* botton actions */
 
@@ -194,8 +251,144 @@
       chosenUsername.innerHTML = 'Username: ' + username;
     }
 
+    // copy room code
     roomIdDisplay.onclick = function() {
       copyToClipboard(roomId);
+    }
+
+    // update game rule
+    function changeRule(checkbox){
+      console.log('rule change happened');
+      if (checkbox.checked) {
+        socket.emit('ruleUpdate', { roomId: roomId, userId: userId, rule: checkbox.value, active: true});
+      } else {
+        socket.emit('ruleUpdate', { roomId: roomId, userId: userId, rule: checkbox.value, active: false});
+      }
+    }
+
+    function getCardHTML(card) {
+      card = card.replace('red', '#f54242');
+      card = card.replace('blue', 'DodgerBlue');
+      card = card.replace('green', 'LimeGreen');
+      card = card.replace('yellow', 'Gold');
+
+      const cardProperties = card.split(' ');
+      var cardHTML = '';
+
+      // draw cards
+      if (cardProperties.length == 3) {
+        if (cardProperties[2] === '2') {
+          cardHTML = `<div class="card" style="background-color: ${cardProperties[0]};">+2</div>`;
+        } else {
+          cardHTML = `<div class="card" style="color: white; background-color: black;">+4</div>`;
+        }
+      // number, reverse, or skip cards
+      } else if (cardProperties.length == 2) {
+        // reverse or skip cards 
+        if (cardProperties[1] == 'Skip') {
+          cardHTML = `<div class="card" style="background-color: ${cardProperties[0]};">⊘</div>`;
+        } else if (cardProperties[1] == 'Reverse') {
+          cardHTML = `<div class="card" style="background-color: ${cardProperties[0]};">⇄</div>`;
+        } else {
+          cardHTML = `<div class="card" style="background-color: ${cardProperties[0]};">${cardProperties[1]}</div>`;
+        }
+
+      // wild cards
+      } else {
+        cardHTML = `<div class="card" style="
+          background: linear-gradient(to right, #f54242 0%, #f54242 50%, DodgerBlue 50%, DodgerBlue 100%), 
+          linear-gradient(to right, LimeGreen 0%, LimeGreen 50%, Gold 50%, Gold 100%);
+          background-size: 100% 50%;
+          background-repeat: no-repeat;
+          background-position: center top, center bottom;
+        "></div>`;
+      }
+      return cardHTML;
+    }
+
+    function createFields(players) {
+      var otherCards = document.getElementById("otherCards");
+      var size = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
+      otherCards.style.height = size - 100 + 'px';
+      otherCards.style.width = size + 90 + 'px';
+  
+      for (let username of Object.keys(players)) {
+        var div = document.createElement('div');
+        div.className = "otherCardsStack";
+        div.id = 'playerCard-' + username;
+  
+        otherCards.appendChild(div);
+      }
+      
+      updateOtherCards(players);
+    }
+
+    function updateOtherCards(players) {
+      // Adding more cards dynamically
+      for (let username of Object.keys(players)) {  
+        const cardContainer = document.getElementById('playerCard-' + username);
+        cardContainer.innerHTML = '';
+        for (let i = 0; i <= players[username] - 1; i++) {
+          const card = document.createElement('div');
+          card.classList.add('otherCard');
+          card.textContent = ``;
+          card.style.marginLeft = `${(i - 1) * 8 - (Object.keys(players).length * 3)}px`; // Adjusting the margin for stacking effect compensate for right shift too
+          
+          cardContainer.appendChild(card);
+        }
+      }
+    }
+    
+    function distributeFields() {
+      var size = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
+      var myNodeList = document.querySelectorAll('.otherCardsStack');
+      var fields = Array.from(myNodeList);
+      var width = size / 2;
+      var height = size / 2;
+      var angle = Math.PI; // Start at the leftmost point of the semi-circle
+      var step = Math.PI / (fields.length - 1); // Only go halfway around the circle
+      var radius = 0.5 * width;
+    
+      fields.forEach(function (element, index) {
+    
+        // position single element in center
+        if (fields.length == 1) {
+          angle += Math.PI / 2;
+        }
+    
+        var x = Math.round(width + radius * Math.cos(angle));
+        var y = Math.round(height + radius * Math.sin(angle));
+    
+        // improve viewing
+        if (fields.length == 2) {
+          y -= 140;
+        }
+
+        // move to top
+        y -= 180;
+    
+        element.style.left = x + 'px';
+        element.style.top = y + 'px';
+    
+        var rotationBase = -1 * (180 / fields.length * ((fields.length - 1) / 2));
+        var rotation = rotationBase + 180 / fields.length * index;
+    
+        // improve viewing
+        if (fields.length == 2) {
+          if (rotation < 0) {
+            rotation += 20;
+          } else {
+            rotation -= 20;
+          }
+        }
+        element.style.transform = 'rotate(' + rotation + 'deg)';
+    
+        if (fields.length == 1) {
+          step += 1;
+        }
+    
+        angle += step;
+      });
     }
 
     // ready to play game in waiting room
@@ -213,6 +406,12 @@
       home.style.display = 'inline';
       waitingRoom.style.display = 'none';
     }
+
+    // Get all checkboxes and attach the onchange event
+    const checkboxes = document.querySelectorAll('input.ruleBtn');
+    checkboxes.forEach(checkbox => {
+      checkbox.onchange = () => changeRule(checkbox);
+    }); 
     
 
 	});
