@@ -107,7 +107,20 @@ io.on('connection', (socket) => {
   // creating a room
   socket.on('createRoom', (data) => {
     const roomId = uuidv4();
-    ROOMS[roomId] = { players: {}, started: false, deck: [] , gameType: null};
+    ROOMS[roomId] = { manager: data.createRoomUserId, 
+                      started: false, 
+                      players: {}, 
+                      deck: [], 
+                      discardPile: [], 
+                      gameType: '', 
+                      rules: {
+                        playMultiple: false,
+                        draw2Stack: false,
+                        draw4Stack: false,
+                        draw4OnDraw2: false,
+                        draw2OnDraw4: false
+                      }, 
+                      chat: []};
     socket.join(roomId);
     socket.emit('roomCreated', roomId);
     console.log(`Room created: ${roomId} by ${data.createRoomUserId}`);
@@ -133,15 +146,76 @@ io.on('connection', (socket) => {
       SOCKET_LIST[uid].emit('updateWaitingRoom', ROOMS[data.roomId]);
     }
   });
+  
+  // rule update
+  socket.on('ruleUpdate', (data) => {
+    const room = ROOMS[data.roomId];
+
+    if (room.manager == data.userId) {
+      room.rules[data.rule] = data.active;
+      //console.log(room.rules);
+    }
+
+  })
 
   // clicks ready in waiting room
   socket.on('ready', (data) => {
     console.log(`${data.userId} is readyb`)
     ROOMS[data.roomId].players[data.userId].isReady = true;
+    var allReady = true;
     for (let uid in ROOMS[data.roomId].players) {
       console.log('update id: ' + uid);
       SOCKET_LIST[uid].emit('updateWaitingRoom', ROOMS[data.roomId]);
+      // check whether all players are ready
+      if (ROOMS[data.roomId].players[uid].isReady == false) {
+        allReady = false;
+      }
     }
+
+    if (allReady) {
+      const deck = generateUnoDeck();
+      const shuffledDeck = shuffleDeck(deck);
+
+      const room = ROOMS[data.roomId];
+
+      // get top card for discard      
+      room.discardPile = shuffledDeck.shift();
+
+      room.deck = shuffledDeck;
+
+        
+      for (let uid in room.players) {
+        const deal = dealCards(room.deck);
+        room.players[uid].hand = deal['deal'];
+        room.deck = deal['updatedDeck'];
+        //console.log(ROOMS[data.roomId].players[uid]);
+        //console.log(ROOMS[data.roomId].deck.length);
+
+        //console.log(obfuscatedPlayers);
+        console.log(room.players[uid].hand);
+
+      }// for uid in room.players
+
+      for (let uid in room.players) {
+        
+        var obfuscatedPlayers = {};
+        // only shows the number of cards the other players have
+        for (let player of Object.keys(room.players)) {
+          if (player != uid) {
+            obfuscatedPlayers[room.players[player].username] = room.players[player].hand.length;
+          }
+        }
+
+        SOCKET_LIST[uid].emit('gameStarted', { 
+          started: true, 
+          deal: room.players[uid].hand, 
+          obfPlayers: obfuscatedPlayers,
+          discardPile: room.discardPile
+        });
+      }
+
+    }// if allReady
+    
   });
 
   // clicks quit in waiting room
@@ -230,6 +304,64 @@ function getPlayerIdFromSocket(socketId) {
     }
   }
   return null;
+}
+
+// populates list with original uno cards
+function generateUnoDeck() {
+  const colors = ['red', 'blue', 'green', 'yellow'];
+  const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  const specialCards = ['Draw 2', 'Reverse', 'Skip'];
+  const deck = [];
+
+  // Add number cards
+  colors.forEach(color => {
+      // One 0 card
+      deck.push(`${color} 0`);
+      // Two of each number card 1-9
+      numbers.slice(1).forEach(number => {
+          deck.push(`${color} ${number}`);
+          deck.push(`${color} ${number}`);
+      });
+  });
+
+  // Add special cards
+  colors.forEach(color => {
+      specialCards.forEach(card => {
+          deck.push(`${color} ${card}`);
+          deck.push(`${color} ${card}`);
+      });
+  });
+
+  // Add Wild cards
+  for (let i = 0; i < 4; i++) {
+      deck.push('Wild');
+      deck.push('Wild Draw 4');
+  }
+
+  return deck;
+}
+
+function shuffleDeck(deck) {
+    for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]]; // Swap elements
+    }
+    return deck;
+}
+
+function dealCards(deck, numCards = 7) {
+    if (deck.length < numCards) {
+        throw new Error('Not enough cards in the deck to draw the requested number of cards.');
+    }
+
+    const drawnCards = [];
+    for (let i = 0; i < numCards; i++) {
+        const randomIndex = Math.floor(Math.random() * deck.length);
+        drawnCards.push(deck[randomIndex]);
+        deck.splice(randomIndex, 1);  // Remove the drawn card from the deck
+    }
+
+    return { 'deal': drawnCards, 'updatedDeck': deck };
 }
 
 server.listen(PORT, () => {
