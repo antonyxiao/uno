@@ -13,8 +13,4 @@ inside /uno, run
 ```
 $ node app.js
 ```
-and then run 
-```
-"localhost:4000"
-```
-in browser
+and then go to `localhost:4000` in browser
