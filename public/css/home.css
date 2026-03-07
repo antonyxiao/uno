@@ -1,0 +1,318 @@
+/* ============================================================
+   UNO Online - Home Page Styles
+   ============================================================ */
+
+/* --- Layout --- */
+
+.home-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px 16px;
+  gap: 20px;
+}
+
+/* --- UNO Logo (pure CSS) --- */
+
+.uno-logo {
+  margin-bottom: 4px;
+}
+
+.uno-logo-card {
+  position: relative;
+  width: 100px;
+  height: 140px;
+  border-radius: 14px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  box-shadow:
+    0 6px 30px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(124, 77, 255, 0.15);
+  transform: rotate(-6deg);
+  transition: transform 0.3s ease;
+}
+
+.uno-logo-card:hover {
+  transform: rotate(0deg) scale(1.05);
+}
+
+.uno-quadrant {
+  width: 100%;
+  height: 100%;
+}
+
+.q-red    { background: var(--uno-red); }
+.q-blue   { background: var(--uno-blue); }
+.q-green  { background: var(--uno-green); }
+.q-yellow { background: var(--uno-yellow); }
+
+.uno-logo-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 900;
+  font-style: italic;
+  color: #ffffff;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 10px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
+  /* Ellipse behind the text */
+  background: radial-gradient(ellipse 70% 40% at center, rgba(0, 0, 0, 0.35) 0%, transparent 100%);
+}
+
+/* --- Typography --- */
+
+.home-title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-align: center;
+}
+
+.accent-text {
+  background: linear-gradient(135deg, var(--uno-red), var(--uno-yellow));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.home-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  margin-top: -8px;
+  text-align: center;
+}
+
+/* --- Panels --- */
+
+.home-panel {
+  width: 100%;
+  max-width: 400px;
+}
+
+.panels-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 860px;
+}
+
+.panels-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.panels-divider::before,
+.panels-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--glass-border);
+}
+
+.panel-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.panel-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+/* --- Input rows --- */
+
+.input-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.input-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Full-width button */
+.btn-block {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 1.05rem;
+}
+
+/* --- Footer --- */
+
+.home-footer {
+  margin-top: 12px;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* ============================================================
+   Floating Cards Background Animation
+   ============================================================ */
+
+.floating-cards {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.floating-card {
+  position: absolute;
+  width: 48px;
+  height: 70px;
+  border-radius: 8px;
+  opacity: 0.07;
+  animation: floatCard linear infinite;
+  will-change: transform;
+}
+
+.floating-card::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 5px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+.floating-card.fc-red    { background: var(--uno-red); }
+.floating-card.fc-blue   { background: var(--uno-blue); }
+.floating-card.fc-green  { background: var(--uno-green); }
+.floating-card.fc-yellow { background: var(--uno-yellow); }
+
+@keyframes floatCard {
+  0% {
+    transform: translateY(110vh) rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.07;
+  }
+  95% {
+    opacity: 0.07;
+  }
+  100% {
+    transform: translateY(-120px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   Responsive - Tablet+ (side-by-side panels)
+   ============================================================ */
+
+@media (min-width: 768px) {
+  .home-title {
+    font-size: 3rem;
+  }
+
+  .home-subtitle {
+    font-size: 1.15rem;
+  }
+
+  .panels-row {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 24px;
+  }
+
+  .panels-row .home-panel {
+    flex: 1;
+  }
+
+  .panels-divider {
+    flex-direction: column;
+    width: auto;
+    max-width: none;
+  }
+
+  .panels-divider::before,
+  .panels-divider::after {
+    width: 1px;
+    height: 100%;
+    flex: 1;
+  }
+
+  .uno-logo-card {
+    width: 120px;
+    height: 168px;
+  }
+
+  .uno-logo-text {
+    font-size: 2.4rem;
+  }
+
+  .floating-card {
+    width: 60px;
+    height: 88px;
+  }
+}
+
+/* ============================================================
+   Responsive - Large screens
+   ============================================================ */
+
+@media (min-width: 1200px) {
+  .home-title {
+    font-size: 3.5rem;
+  }
+
+  .floating-card {
+    width: 70px;
+    height: 100px;
+    opacity: 0.05;
+  }
+}
+
+/* ============================================================
+   Reduced motion
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-cards {
+    display: none;
+  }
+
+  .uno-logo-card {
+    transform: rotate(-6deg);
+  }
+
+  .uno-logo-card:hover {
+    transform: rotate(-6deg);
+  }
+}

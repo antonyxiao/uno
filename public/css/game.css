@@ -1,0 +1,554 @@
+/* Game Board Layout */
+.game-container {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Top bar */
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--glass-border);
+  z-index: 50;
+}
+
+.game-header .room-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.game-header .game-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.game-header .game-actions button {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+
+/* Opponents area (top) */
+.opponents-area {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 10px 16px;
+  flex-wrap: wrap;
+}
+
+.opponent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--glass-bg);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  min-width: 100px;
+}
+
+.opponent.active-turn {
+  border-color: var(--accent);
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.opponent.disconnected {
+  opacity: 0.4;
+}
+
+.opponent-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: white;
+}
+
+.opponent-name {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.opponent-cards {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.opponent-cards .card.mini {
+  margin-left: -8px;
+}
+.opponent-cards .card.mini:first-child {
+  margin-left: 0;
+}
+
+.opponent-card-count {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.opponent .uno-badge {
+  background: var(--danger);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 8px;
+  animation: pulseBadge 1s infinite;
+}
+
+@keyframes pulseBadge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.host-crown {
+  font-size: 0.7rem;
+  color: var(--uno-yellow);
+}
+
+/* Center play area */
+.play-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  position: relative;
+}
+
+.pile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.pile-label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Discard pile - fanned cards */
+.discard-pile {
+  position: relative;
+  width: 80px;
+  height: 120px;
+}
+
+.discard-pile .card {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.discard-pile .card:nth-child(1) { transform: rotate(-3deg); opacity: 0.3; }
+.discard-pile .card:nth-child(2) { transform: rotate(2deg); opacity: 0.6; }
+.discard-pile .card:last-child { transform: rotate(0deg); opacity: 1; }
+
+/* Draw pile */
+.draw-pile {
+  position: relative;
+  width: 80px;
+  height: 120px;
+  cursor: pointer;
+}
+
+.draw-pile:hover .card {
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.draw-count {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: var(--accent);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+/* Current color indicator */
+.color-indicator {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 15px currentColor;
+  transition: all 0.3s ease;
+}
+.color-indicator.red { background: var(--uno-red); color: var(--uno-red); }
+.color-indicator.blue { background: var(--uno-blue); color: var(--uno-blue); }
+.color-indicator.green { background: var(--uno-green); color: var(--uno-green); }
+.color-indicator.yellow { background: var(--uno-yellow); color: var(--uno-yellow); }
+
+/* Direction indicator */
+.direction-indicator {
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  transition: transform 0.3s ease;
+}
+.direction-indicator.counter-clockwise {
+  transform: scaleX(-1);
+}
+
+/* Turn indicator */
+.turn-info {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--glass-bg);
+}
+.turn-info.your-turn {
+  color: var(--accent);
+  font-weight: 600;
+  background: rgba(124, 77, 255, 0.15);
+}
+
+/* Pending draw indicator */
+.pending-draw {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--danger);
+  animation: pulseBadge 1s infinite;
+}
+
+/* Player's hand (bottom) */
+.hand-area {
+  padding: 8px 16px 16px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--glass-border);
+  z-index: 50;
+}
+
+.hand-container {
+  display: flex;
+  justify-content: center;
+  gap: -10px;
+  overflow-x: auto;
+  padding: 10px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+.hand-container .card {
+  margin-left: -10px;
+  transition: transform 0.2s ease, margin 0.2s ease;
+}
+.hand-container .card:first-child {
+  margin-left: 0;
+}
+.hand-container:hover .card {
+  margin-left: -4px;
+}
+
+/* Hand controls */
+.hand-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  align-items: center;
+  padding-top: 8px;
+}
+
+/* UNO button */
+.uno-button {
+  background: var(--danger);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 900;
+  padding: 12px 32px;
+  border-radius: 50px;
+  border: 3px solid white;
+  box-shadow: 0 0 20px rgba(255,68,68,0.5);
+  animation: unoGlow 1s infinite;
+  display: none;
+}
+.uno-button.visible {
+  display: block;
+}
+@keyframes unoGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255,68,68,0.5); }
+  50% { box-shadow: 0 0 30px rgba(255,68,68,0.8); }
+}
+
+/* Combo play selection */
+.hand-container .card.combo-selected {
+  transform: translateY(-20px);
+  box-shadow: 0 0 12px var(--accent-glow), 0 0 24px var(--accent-glow);
+  border: 2px solid var(--accent);
+  position: relative;
+}
+.combo-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--accent);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Combo play button */
+.combo-play-btn {
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 25px;
+  border: 2px solid white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.combo-play-btn.valid {
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+.combo-play-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.combo-play-btn:not(:disabled):hover {
+  transform: scale(1.05);
+}
+
+/* Challenge UNO button */
+.challenge-uno-btn {
+  background: var(--warning);
+  color: white;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 20px;
+  animation: pulseBadge 0.5s infinite;
+  display: none;
+}
+.challenge-uno-btn.visible {
+  display: inline-block;
+}
+
+/* Turn timer bar */
+.turn-timer {
+  height: 3px;
+  background: var(--glass-border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.turn-timer-bar {
+  height: 100%;
+  background: var(--accent);
+  transition: width 1s linear;
+  border-radius: 2px;
+}
+.turn-timer-bar.urgent {
+  background: var(--danger);
+}
+
+/* Color picker modal */
+.color-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 20px;
+}
+
+.color-picker-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.color-picker-btn:hover {
+  transform: scale(1.1);
+  border-color: white;
+}
+.color-picker-btn.red { background: var(--uno-red); }
+.color-picker-btn.blue { background: var(--uno-blue); }
+.color-picker-btn.green { background: var(--uno-green); }
+.color-picker-btn.yellow { background: var(--uno-yellow); }
+
+/* Swap target picker */
+.swap-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.swap-target {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.swap-target:hover {
+  background: var(--bg-elevated);
+  border-color: var(--accent);
+}
+
+/* Game log */
+.game-log {
+  position: fixed;
+  right: 0;
+  top: 50px;
+  bottom: 0;
+  width: 280px;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--glass-border);
+  padding: 12px;
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 40;
+  font-size: 0.8rem;
+}
+.game-log.open {
+  transform: translateX(0);
+}
+.game-log-toggle {
+  position: fixed;
+  right: 10px;
+  top: 60px;
+  z-index: 45;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+}
+.log-entry {
+  padding: 4px 0;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--glass-border);
+}
+.log-entry:last-child { border-bottom: none; }
+
+/* End game modal */
+.end-modal h2 { margin-bottom: 16px; }
+.score-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+.score-table th, .score-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--glass-border);
+}
+.score-table th {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+.end-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+/* Skip animation overlay */
+.skip-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--danger);
+  text-shadow: 0 0 20px rgba(255,68,68,0.5);
+  animation: flashText 0.8s ease forwards;
+  pointer-events: none;
+  z-index: 100;
+}
+@keyframes flashText {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  30% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+/* Win animation */
+.confetti-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  animation: confettiFall 3s linear forwards;
+}
+@keyframes confettiFall {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .opponents-area {
+    gap: 8px;
+    padding: 6px 8px;
+  }
+  .opponent {
+    min-width: 70px;
+    padding: 4px 8px;
+  }
+  .play-area {
+    gap: 20px;
+  }
+  .game-log {
+    width: 100%;
+    height: 40%;
+    top: auto;
+    bottom: 0;
+    transform: translateY(100%);
+  }
+  .game-log.open {
+    transform: translateY(0);
+  }
+  .hand-container .card {
+    margin-left: -14px;
+  }
+}

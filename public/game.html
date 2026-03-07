@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>UNO Online - Game</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/cards.css">
+  <link rel="stylesheet" href="/css/game.css">
+</head>
+<body>
+  <div class="game-container" id="gameContainer">
+
+    <!-- Header -->
+    <header class="game-header">
+      <div class="room-info">
+        <span id="roomCodeDisplay"></span>
+        <span class="direction-indicator" id="directionIndicator">&#x21BB;</span>
+      </div>
+      <div class="turn-info" id="turnInfo">Waiting...</div>
+      <div class="game-actions">
+        <button class="btn-secondary game-log-toggle" id="toggleLog">Log</button>
+        <button class="btn-secondary" id="btnLeave">Leave</button>
+      </div>
+    </header>
+
+    <!-- Main game area -->
+    <div class="game-main">
+      <!-- Opponents -->
+      <div class="opponents-area" id="opponentsArea"></div>
+
+      <!-- Center play area -->
+      <div class="play-area">
+        <div class="pile-container">
+          <div class="draw-pile" id="drawPile" title="Draw a card">
+            <div class="card card-back">
+              <div class="card-back-inner">UNO</div>
+            </div>
+            <span class="draw-count" id="drawCount">0</span>
+          </div>
+          <span class="pile-label">Draw</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+          <div class="color-indicator" id="colorIndicator"></div>
+          <div class="pending-draw" id="pendingDraw" style="display:none"></div>
+        </div>
+
+        <div class="pile-container">
+          <div class="discard-pile" id="discardPile"></div>
+          <span class="pile-label">Discard</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Player's hand -->
+    <div class="hand-area">
+      <div class="turn-timer" id="turnTimer">
+        <div class="turn-timer-bar" id="turnTimerBar" style="width:100%"></div>
+      </div>
+      <div class="hand-container" id="handContainer"></div>
+      <div class="hand-controls">
+        <button class="uno-button" id="unoButton">UNO!</button>
+        <button class="combo-play-btn" id="comboPlayBtn" style="display:none">Play Combo</button>
+        <button class="challenge-uno-btn" id="challengeUnoBtn">Challenge!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game log sidebar -->
+  <div class="game-log" id="gameLog">
+    <h3 style="margin-bottom:8px;font-size:0.9rem;">Game Log</h3>
+    <div id="logEntries"></div>
+  </div>
+
+  <!-- Color picker modal -->
+  <div class="modal-overlay" id="colorPickerModal" style="display:none">
+    <div class="modal">
+      <h3 style="text-align:center;margin-bottom:16px">Choose a Color</h3>
+      <div class="color-picker">
+        <button class="color-picker-btn red" data-color="red"></button>
+        <button class="color-picker-btn blue" data-color="blue"></button>
+        <button class="color-picker-btn green" data-color="green"></button>
+        <button class="color-picker-btn yellow" data-color="yellow"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Swap target modal -->
+  <div class="modal-overlay" id="swapModal" style="display:none">
+    <div class="modal">
+      <h3 style="text-align:center;margin-bottom:16px">Choose a Player to Swap Hands With</h3>
+      <div class="swap-picker" id="swapPicker"></div>
+    </div>
+  </div>
+
+  <!-- Round/Game over modal -->
+  <div class="modal-overlay" id="endModal" style="display:none">
+    <div class="modal end-modal" id="endModalContent"></div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Connection status -->
+  <div class="connection-status" id="connectionStatus">
+    <span class="connection-dot" id="connectionDot"></span>
+    <span id="connectionLabel">Connected</span>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/uiHelpers.js"></script>
+  <script src="/js/cardRenderer.js"></script>
+  <script src="/js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "uno-game",
+  "version": "1.0.0",
+  "description": "Multiplayer UNO card game",
+  "main": "server/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "npx playwright test"
+  },
+  "keywords": [
+    "uno",
+    "multiplayer",
+    "card-game"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "express": "^5.2.1",
+    "socket.io": "^4.8.3",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.3",
+    "vitest": "^4.0.18"
+  }
+}

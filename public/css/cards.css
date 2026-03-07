@@ -1,0 +1,217 @@
+/* UNO Card Styles - Pure CSS rendering */
+.card {
+  width: 80px;
+  height: 120px;
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  user-select: none;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+  font-weight: 700;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  z-index: 10;
+}
+
+.card.selected {
+  transform: translateY(-20px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+  z-index: 20;
+}
+
+.card.playable {
+  box-shadow: 0 0 12px rgba(255,255,255,0.3);
+}
+
+.card.dimmed {
+  opacity: 0.5;
+  filter: brightness(0.7);
+}
+
+.card.dimmed:hover {
+  transform: translateY(-4px);
+}
+
+/* Card colors */
+.card.red { background: var(--uno-red); }
+.card.blue { background: var(--uno-blue); }
+.card.green { background: var(--uno-green); }
+.card.yellow { background: var(--uno-yellow); color: #333; }
+.card.wild {
+  background: linear-gradient(135deg, var(--uno-red) 25%, var(--uno-blue) 25%, var(--uno-blue) 50%, var(--uno-green) 50%, var(--uno-green) 75%, var(--uno-yellow) 75%);
+}
+
+/* Card inner oval */
+.card-inner {
+  width: 58px;
+  height: 90px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-15deg);
+  position: relative;
+}
+
+.card.yellow .card-inner {
+  background: rgba(0,0,0,0.1);
+}
+
+/* Card value */
+.card-value {
+  font-size: 2rem;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  line-height: 1;
+}
+
+.card.yellow .card-value {
+  color: #333;
+  text-shadow: none;
+}
+
+/* Corner numbers */
+.card-corner {
+  position: absolute;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: white;
+}
+.card.yellow .card-corner { color: #333; }
+.card-corner.top { top: 4px; left: 6px; }
+.card-corner.bottom { bottom: 4px; right: 6px; transform: rotate(180deg); }
+
+/* Action card symbols */
+.card-value.skip::after { content: "\29D8"; font-size: 2.5rem; }
+.card-value.reverse::after { content: "\21BB"; font-size: 2.5rem; }
+.card-value.draw2::after { content: "+2"; font-size: 1.5rem; }
+.card-value.wild-text::after { content: "W"; font-size: 2rem; }
+.card-value.wild-draw4::after { content: "+4"; font-size: 1.5rem; }
+
+/* Wild card four-color diamond */
+.wild-symbol {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  transform: rotate(45deg);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.wild-symbol .q1 { background: var(--uno-red); }
+.wild-symbol .q2 { background: var(--uno-blue); }
+.wild-symbol .q3 { background: var(--uno-yellow); }
+.wild-symbol .q4 { background: var(--uno-green); }
+
+/* Wild Draw 4 label */
+.wd4-label {
+  position: absolute;
+  bottom: 8px;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Card back */
+.card.card-back {
+  background: var(--bg-elevated);
+  border-color: #444;
+  cursor: default;
+}
+.card.card-back:hover {
+  transform: none;
+  box-shadow: none;
+}
+.card-back-inner {
+  width: 58px;
+  height: 90px;
+  background: var(--uno-red);
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-15deg);
+  font-size: 1rem;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -1px;
+}
+
+/* Mini cards (for opponent hands) */
+.card.mini {
+  width: 30px;
+  height: 45px;
+  border-radius: 5px;
+  border-width: 1.5px;
+  font-size: 0.5rem;
+}
+.card.mini .card-inner {
+  width: 22px;
+  height: 34px;
+  border-radius: 15px;
+}
+.card.mini .card-value { font-size: 0.9rem; }
+.card.mini .card-corner { display: none; }
+.card.mini:hover { transform: none; box-shadow: none; }
+
+/* Card animations */
+.card.dealing {
+  animation: dealCard 0.3s ease forwards;
+}
+@keyframes dealCard {
+  from { transform: translate(0, -200px) rotate(-20deg); opacity: 0; }
+  to { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+}
+
+.card.playing {
+  animation: playCard 0.4s ease forwards;
+}
+@keyframes playCard {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1) translateY(-20px); }
+  100% { transform: scale(0.5) translateY(-100px); opacity: 0; }
+}
+
+.card.drawing {
+  animation: drawCard 0.3s ease forwards;
+}
+@keyframes drawCard {
+  from { transform: translateY(-50px) scale(0.8); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Mobile sizes */
+@media (max-width: 768px) {
+  .card {
+    width: 56px;
+    height: 84px;
+    border-radius: 7px;
+    border-width: 2px;
+  }
+  .card-inner {
+    width: 40px;
+    height: 62px;
+    border-radius: 28px;
+  }
+  .card-value { font-size: 1.4rem; }
+  .card-corner { font-size: 0.5rem; }
+
+  .card.mini {
+    width: 22px;
+    height: 33px;
+    border-radius: 3px;
+    border-width: 1px;
+  }
+}

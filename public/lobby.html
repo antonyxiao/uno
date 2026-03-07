@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNO - Game Lobby</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/lobby.css">
+</head>
+<body>
+  <div class="toast-container" id="toastContainer"></div>
+
+  <header class="lobby-header">
+    <h1 class="lobby-title">UNO</h1>
+    <div class="room-info">
+      <div class="room-code-group">
+        <label>Room Code</label>
+        <div class="copyable-field">
+          <span id="roomCodeDisplay" class="room-code-value">----</span>
+          <button class="btn-copy" id="copyCodeBtn" title="Copy room code">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+            </svg>
+            <span class="copy-label">Copy</span>
+          </button>
+        </div>
+      </div>
+      <div class="room-link-group">
+        <label>Invite Link</label>
+        <div class="copyable-field">
+          <span id="roomLinkDisplay" class="room-link-value">...</span>
+          <button class="btn-copy" id="copyLinkBtn" title="Copy invite link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+            </svg>
+            <span class="copy-label">Copy</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="lobby-layout">
+    <!-- Left Column: Players + Chat -->
+    <section class="lobby-left">
+      <div class="glass-panel players-panel">
+        <div class="panel-header">
+          <h2>Players <span id="playerCount" class="player-count">0/10</span></h2>
+        </div>
+        <ul id="playerList" class="player-list">
+          <!-- Players populated by JS -->
+        </ul>
+        <div id="hostControls" class="host-bot-controls" style="display:none;">
+          <div class="add-bot-row">
+            <select id="botDifficulty" class="bot-difficulty-select">
+              <option value="easy">Easy Bot</option>
+              <option value="medium" selected>Medium Bot</option>
+              <option value="hard">Hard Bot</option>
+            </select>
+            <button class="btn-secondary" id="addBotBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Add Bot
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-panel chat-panel">
+        <div class="panel-header">
+          <h2>Chat</h2>
+        </div>
+        <div id="chatMessages" class="chat-messages">
+          <!-- Chat messages populated by JS -->
+        </div>
+        <form id="chatForm" class="chat-input-row">
+          <input type="text" id="chatInput" placeholder="Type a message..." maxlength="200" autocomplete="off">
+          <button type="submit" class="btn-primary chat-send-btn">Send</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Right Column: Settings -->
+    <section class="lobby-right">
+      <div class="glass-panel settings-panel">
+        <div class="panel-header">
+          <h2>House Rules</h2>
+        </div>
+
+        <div id="settingsContainer" class="settings-container">
+          <!-- Stacking -->
+          <div class="settings-category">
+            <h3 class="category-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="12 2 2 7 12 12 22 7 12 2"/>
+                <polyline points="2 17 12 22 22 17"/>
+                <polyline points="2 12 12 17 22 12"/>
+              </svg>
+              Stacking
+            </h3>
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-name">Stack Draw Cards</span>
+                <span class="setting-desc">Allow stacking +2 on +2</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" data-setting="stackDrawCards">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-name">Stack Wild Draw 4</span>
+                <span class="setting-desc">Allow stacking +4 on +4</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" data-setting="stackWildDraw4">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-name">Stack +2 on +4</span>
+                <span class="setting-desc">Allow playing +2 on a +4</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" data-setting="stackDraw2OnDraw4">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Draw Rules -->
+          <div class="settings-category">
+            <h3 class="category-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <line x1="12" y1="8" x2="12" y2="16"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+              </svg>
+              Draw Rules
+            </h3>
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-name">Play on Draw</span>
+                <span class="setting-desc">Play a matching card immediately after drawing</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" data-setting="playMatchingCardOnDraw">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-name">Force Play on Draw</span>
+                <span class="setting-desc">Must play drawn card if it matches</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" data-setting="forcePlayOnDraw">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-name">Draw Until Playable</span>
+                <span class="setting-desc">Keep drawing until you get a playable card</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" data-setting="drawUntilPlayable">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Special Rules -->
+          <div class="settings-category">
+            <h3 class="category-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+              Special Rules
+            </h3>
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-name">Jump-In</span>
+                <span class="setting-desc">Play same number, different color out of turn</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" data-setting="allowSameNumberDifferentColor">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-name">Seven Swap</span>
+                <span class="setting-desc">Playing a 7 swaps hands with another player</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" data-setting="sevenSwapHands">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-name">Zero Rotate</span>
+                <span class="setting-desc">Playing a 0 rotates all hands</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" data-setting="zeroRotateHands">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-name">Combo Play</span>
+                <span class="setting-desc">Chain matching number cards in a single turn</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" data-setting="comboPlay">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Challenge -->
+          <div class="settings-category">
+            <h3 class="category-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              Challenge
+            </h3>
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-name">No Bluffing +4</span>
+                <span class="setting-desc">Wild Draw 4 can only be played if no color match</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" data-setting="noBluffingWildDraw4">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Game Mode -->
+          <div class="settings-category">
+            <h3 class="category-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polygon points="10 8 16 12 10 16 10 8"/>
+              </svg>
+              Game Mode
+            </h3>
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-name">Win Condition</span>
+                <span class="setting-desc">How the winner is determined</span>
+              </div>
+              <select data-setting="winCondition" class="setting-select">
+                <option value="first_out">First Out Wins</option>
+                <option value="last_standing">Last Standing</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <span class="setting-name">Point Limit</span>
+                <span class="setting-desc">Points needed to win (0 = single round)</span>
+              </div>
+              <select data-setting="pointLimit" class="setting-select">
+                <option value="0">No Limit (Single Round)</option>
+                <option value="200">200 Points</option>
+                <option value="300">300 Points</option>
+                <option value="500">500 Points</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary start-game-btn" id="startGameBtn" disabled>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        Start Game
+      </button>
+    </section>
+  </main>
+
+  <div class="connection-status">
+    <span class="connection-dot" id="connectionDot"></span>
+    <span id="connectionText">Connecting...</span>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/lobby.js"></script>
+</body>
+</html>

@@ -1,0 +1,671 @@
+/* =============================================
+   UNO Lobby Styles
+   ============================================= */
+
+/* Header / Room Info */
+.lobby-header {
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  border-bottom: 1px solid var(--glass-border);
+  background: var(--bg-secondary);
+  flex-wrap: wrap;
+}
+
+.lobby-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, var(--uno-red), var(--uno-yellow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.room-info {
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.room-code-group label,
+.room-link-group label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.copyable-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+.room-code-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--accent);
+  font-family: 'Courier New', monospace;
+}
+
+.room-link-value {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-copy {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-copy:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.btn-copy.copied {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+}
+
+.btn-copy.copied .copy-label::after {
+  content: none;
+}
+
+/* =============================================
+   Two-Column Layout
+   ============================================= */
+.lobby-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 24px 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 100px);
+}
+
+.lobby-left {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.lobby-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* =============================================
+   Panel Headers
+   ============================================= */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.panel-header h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-count {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+
+/* =============================================
+   Player List
+   ============================================= */
+.players-panel {
+  flex-shrink: 0;
+}
+
+.player-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.player-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  animation: fadeSlideIn 0.3s ease;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.player-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.player-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: white;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.player-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.player-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-tag {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.tag-host {
+  background: rgba(255, 170, 0, 0.15);
+  color: var(--uno-yellow);
+}
+
+.tag-bot {
+  background: rgba(124, 77, 255, 0.15);
+  color: var(--accent);
+}
+
+.tag-you {
+  background: rgba(76, 175, 80, 0.15);
+  color: var(--success);
+}
+
+.crown-icon {
+  color: var(--uno-yellow);
+  flex-shrink: 0;
+}
+
+.player-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.btn-kick,
+.btn-remove-bot {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.btn-kick:hover {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+}
+
+.btn-remove-bot:hover {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+}
+
+/* =============================================
+   Add Bot Controls
+   ============================================= */
+.host-bot-controls {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--glass-border);
+}
+
+.add-bot-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.bot-difficulty-select {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+.add-bot-row .btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* =============================================
+   Chat Panel
+   ============================================= */
+.chat-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 4px;
+  margin-bottom: 12px;
+  max-height: 300px;
+  min-height: 120px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-elevated) transparent;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: var(--bg-elevated);
+  border-radius: 3px;
+}
+
+.chat-msg {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  padding: 4px 0;
+}
+
+.chat-msg-author {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.chat-msg-text {
+  color: var(--text-secondary);
+}
+
+.chat-msg-system {
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 4px 0;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.chat-input-row input {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+.chat-send-btn {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+}
+
+/* =============================================
+   Settings Panel
+   ============================================= */
+.settings-panel {
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-elevated) transparent;
+}
+
+.settings-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.settings-panel::-webkit-scrollbar-thumb {
+  background: var(--bg-elevated);
+  border-radius: 3px;
+}
+
+.settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings-category {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.category-header svg {
+  opacity: 0.7;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  gap: 12px;
+  transition: border-color 0.2s ease;
+}
+
+.setting-row:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.setting-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.setting-desc {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.setting-select {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  min-width: 150px;
+  flex-shrink: 0;
+}
+
+/* =============================================
+   Toggle Switch
+   ============================================= */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 26px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--glass-border);
+  border-radius: 26px;
+  transition: all 0.3s ease;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 2px;
+  bottom: 2px;
+  background: var(--text-secondary);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+  background: white;
+}
+
+.toggle-switch input:disabled + .toggle-slider {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.toggle-switch:has(input:disabled) {
+  cursor: not-allowed;
+}
+
+/* =============================================
+   Start Game Button
+   ============================================= */
+.start-game-btn {
+  width: 100%;
+  padding: 16px 24px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.start-game-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.start-game-btn:not(:disabled):hover {
+  box-shadow: 0 6px 24px var(--accent-glow);
+}
+
+/* =============================================
+   Settings disabled state (non-host)
+   ============================================= */
+.settings-disabled .setting-row {
+  opacity: 0.6;
+}
+
+.settings-disabled .toggle-switch {
+  pointer-events: none;
+}
+
+.settings-disabled .setting-select {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* =============================================
+   Responsive: Stack on mobile
+   ============================================= */
+@media (max-width: 900px) {
+  .lobby-header {
+    padding: 16px 20px;
+    gap: 16px;
+  }
+
+  .lobby-title {
+    font-size: 1.4rem;
+  }
+
+  .room-info {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .room-link-value {
+    max-width: 180px;
+  }
+
+  .lobby-layout {
+    grid-template-columns: 1fr;
+    padding: 16px 20px;
+    min-height: auto;
+  }
+
+  .lobby-left {
+    order: 1;
+  }
+
+  .lobby-right {
+    order: 2;
+  }
+
+  .settings-panel {
+    max-height: none;
+  }
+
+  .setting-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .setting-row .toggle-switch,
+  .setting-row .setting-select {
+    align-self: flex-end;
+  }
+
+  .setting-select {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .lobby-header {
+    padding: 12px 16px;
+  }
+
+  .lobby-layout {
+    padding: 12px 16px;
+  }
+
+  .glass-panel {
+    padding: 16px;
+  }
+
+  .copyable-field {
+    flex-wrap: wrap;
+  }
+
+  .room-code-value {
+    font-size: 1.1rem;
+  }
+
+  .add-bot-row {
+    flex-direction: column;
+  }
+
+  .add-bot-row .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .bot-difficulty-select {
+    width: 100%;
+  }
+}
