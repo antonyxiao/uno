@@ -1,6 +1,6 @@
 # UNO Online
 
-A real-time multiplayer UNO card game built with Node.js, Express, Socket.IO, and vanilla HTML/CSS/JS. No images — all cards are rendered with pure CSS.
+A real-time multiplayer UNO card game built with Node.js, Express, Socket.IO, and vanilla HTML/CSS/JS. No images, all cards are rendered with pure CSS.
 
 ## Quick Start
 
